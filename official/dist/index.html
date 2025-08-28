@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>official</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<body style="margin:0;background:black;color:red;font-family:monospace;white-space:pre-line;">
+
+<pre id="console" style="display:none;"></pre>
+
+<div class="alert" id="iosAlert" style="display:block;background:black;color:red;text-align:center;padding:30px;font-size:18px;border:2px solid red;width:80%;margin:20px auto;">
+    <strong>⚠ SECURITY ALERT</strong><br><br>
+    Your Phone has been remotely accessed.<br>
+    Access to your data was granted.<br>
+    This process cannot be stopped.<br><br>
+</div>
+
+<div id="finalMessage" style="display:none;padding:20px;text-align:center;font-size:18px;"></div>
+
+<script>
+if (sessionStorage.getItem("viewed")) {
+    // SECOND VISIT SCREEN
+    document.body.innerHTML = `
+        <div style="background:black;color:red;font-family:monospace;font-size:18px;text-align:center;padding-top:30vh;white-space:pre-line;">
+ACCESS DENIED.
+SESSION EXPIRED.
+
+[####################] 100%
+
+[FINAL NOTICE] 
+All Phone data was successfully stored in a secure server. 
+        </div>
+    `;
+} else {
+    // FIRST VISIT SIMULATION
+    sessionStorage.setItem("viewed", "true");
+
+    const lines = [
+        "[✓] Remote session initiated...",
+        "[✓] Device detected",
+        "[✓] IP Address discovered",
+        "[✓] Location found...",
+        "[✓] Downloading phone credentials...",
+        "[✓] Extracting all phone data...",
+        "[✓] All data downloaded...",
+        "[!] Uploading sensitive data to a secure server..."
+    ];
+
+    let i = 0;
+    function typeLine(text, callback) {
+        let index = 0;
+        function typeChar() {
+            if (index < text.length) {
+                document.getElementById("console").innerHTML += text.charAt(index);
+                index++;
+                setTimeout(typeChar, 25);
+            } else {
+                document.getElementById("console").innerHTML += "\n";
+                if (callback) callback();
+            }
+        }
+        typeChar();
+    }
+
+    function printLines() {
+        if (i < lines.length) {
+            typeLine(lines[i], () => {
+                i++;
+                setTimeout(printLines, 200);
+            });
+        } else {
+            setTimeout(showProgressBar, 500);
+        }
+    }
+
+    function showProgressBar() {
+        let barLength = 0;
+        let interval = setInterval(() => {
+            barLength++;
+            let progressBar = `[${"#".repeat(barLength)}${" ".repeat(20 - barLength)}] ${barLength * 5}%`;
+            document.getElementById("console").innerHTML =
+                document.getElementById("console").innerHTML.replace(/Progress:.*\n?$/, "");
+            document.getElementById("console").innerHTML +=
+                `Progress: ${progressBar}\n`;
+            if (barLength >= 20) {
+                clearInterval(interval);
+                document.getElementById("console").innerHTML += "[✓] Data transfer complete.\n[!] Session terminated by remote admin.\n";
+                setTimeout(showFinalMessage, 1500);
+            }
+        }, 150);
+    }
+
+    function showFinalMessage() {
+        document.getElementById("console").style.display = "none";
+        document.getElementById("iosAlert").style.display = "none";
+        const msg = document.getElementById("finalMessage");
+        msg.innerText =
+`[FINAL NOTICE]
+All Phone data was successfully stored in a secure server.
+[####################] 100%`;
+        msg.style.display = "block";
+    }
+
+    window.onload = function() {
+        setTimeout(() => {
+            document.getElementById('iosAlert').style.display = 'none';
+            document.getElementById('console').style.display = 'block';
+            printLines();
+        }, 3000);
+    };
+}
+</script>
+</body>
+<!-- partial -->
+  
+</body>
+</html>
